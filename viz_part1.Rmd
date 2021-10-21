@@ -73,3 +73,52 @@ e.g. color, lines, other stuff
 ## smooth is not going to get the color - name 
 ```
 
+Let's make on more scatterplot. 
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax, size = prcp)) + 
+  geom_point(alpha = .4) + 
+  facet_grid(. ~ name) + 
+  geom_smooth (se = FALSE)
+
+#se is the standard error ~ CI. we remove here, so we put FALSE
+```
+
+
+## use data manipulation as part of this
+```{r}
+weather_df %>% 
+  filter(name == "CentralPark_NY") %>% 
+  mutate(
+    tmax = tmax * (9/5) + 32,
+    tmin = tmin * (9/5) + 32
+  ) %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point()
+
+## if you want to do data manipulation, you can do so prior to creating the ggplot
+
+## and you can do that as part of 1 command!
+```
+
+## Stacking geoms
+
+```{r}
+
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) + 
+  geom_smooth()
+
+## i.e. you don't need to use geom_point (scatterplot)
+```
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_hex()
+
+## hex is better to demonstrate density. need to install "binhex". alt, use geom_bin_2d()
+```
+
+
