@@ -1,40 +1,75 @@
 ---
-title: "Simple document"
-output: html_document
+title: "ggplot 1"
+output: github_document
 ---
 
-I'm an R Markdown document! 
-
-# Section 1
-
-Here's a **code chunk** that samples from 
-a _normal distribution_:
 
 ```{r}
-samp = rnorm(100)
-length(samp)
-```
-
-# Section 2
-
-I can take the mean of the sample, too!
-The mean is `r mean(samp)`.
-
-The code chunk below creates a data frame and generates a plot.
-
-```{r plot example, message = FALSE}
 library(tidyverse)
-#always load the tidyverse package for tibble!
-
-plot_df = tibble(
-  x = rnorm(500, mean = 2, sd = 4),
-  y = 3 - 4.2 * x + rnorm(500)
-)
-
-ggplot(plot_df, aes(x = x, y = y)) + geom_point()
 ```
 
-This plot is really great! it shows a linear equation as expected. 
+Load in a dataset
 
-The data frame has `r nrow(plot_df)` rows.
+```{r}
+weather_df = 
+  rnoaa::meteo_pull_monitors(
+    c("USW00094728", "USC00519397", "USS0023B17S"),
+    var = c("PRCP", "TMIN", "TMAX"), 
+    date_min = "2017-01-01",
+    date_max = "2017-12-31") %>%
+  mutate(
+    name = recode(
+      id, 
+      USW00094728 = "CentralPark_NY", 
+      USC00519397 = "Waikiki_HA",
+      USS0023B17S = "Waterhole_WA"),
+    tmin = tmin / 10,
+    tmax = tmax / 10) %>%
+  select(name, id, everything())
+```
+
+## Scatterplot    
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point()
+```
+
+
+you can save ggplots
+```{r}
+
+ggp_tmax_tmin =
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point()
+```
+
+## let's fancy it up
+
+e.g. color, lines, other stuff
+
+```{r}
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .4) + 
+  geom_smooth(se = FALSE) + 
+  facet_grid(. ~name)
+## using name creates a legend too
+## geom_smooth creates a line for each name 
+## you can use geom_point alpha and alpha = 1 points are solid and 0 is clear
+## if you want to have the data gsmooth and geom point spread out more use facet grid
+## Facet grid allows you to define multiple plots with x and y defined. name would tell them that you don't want to separate out the rows.
+## to turn off color say color = NULL 
+```
+
+```{r, echo = FALSE}
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point(aes(color = name), alpha = .4) + 
+  geom_smooth(se = FALSE)
+## above aes is no longer global bc not at global
+## smooth is not going to get the color - name 
+```
 
