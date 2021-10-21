@@ -121,4 +121,26 @@ weather_df %>%
 ## hex is better to demonstrate density. need to install "binhex". alt, use geom_bin_2d()
 ```
 
+## Univariate plots
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmax, fill = name)) + 
+  geom_histogram() + 
+  facet_grid( .~name)
+## by adding facet grid i can separate out by name 
+```
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmax, fill = name)) + 
+  geom_density(alpha = .3)
+```
+
+using tmax and name
+
+```{r}
+
+weather_df
+```
 
